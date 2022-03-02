@@ -14,6 +14,7 @@
 		4248E42327CE55BC0057817F /* SwiftPartialCircularProgressBarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4248E42227CE55BC0057817F /* SwiftPartialCircularProgressBarTests.swift */; };
 		4248E42D27CE55BC0057817F /* SwiftPartialCircularProgressBarUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4248E42C27CE55BC0057817F /* SwiftPartialCircularProgressBarUITests.swift */; };
 		4248E42F27CE55BC0057817F /* SwiftPartialCircularProgressBarUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4248E42E27CE55BC0057817F /* SwiftPartialCircularProgressBarUITestsLaunchTests.swift */; };
+		4248E43C27CF83680057817F /* extentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4248E43B27CF83680057817F /* extentions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 		4248E42827CE55BC0057817F /* SwiftPartialCircularProgressBarUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftPartialCircularProgressBarUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4248E42C27CE55BC0057817F /* SwiftPartialCircularProgressBarUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftPartialCircularProgressBarUITests.swift; sourceTree = "<group>"; };
 		4248E42E27CE55BC0057817F /* SwiftPartialCircularProgressBarUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftPartialCircularProgressBarUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		4248E43B27CF83680057817F /* extentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extentions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +98,7 @@
 			children = (
 				4248E41127CE55BB0057817F /* SwiftPartialCircularProgressBarApp.swift */,
 				4248E41327CE55BB0057817F /* ContentView.swift */,
+				4248E43B27CF83680057817F /* extentions.swift */,
 				4248E41527CE55BC0057817F /* Assets.xcassets */,
 				4248E41727CE55BC0057817F /* Preview Content */,
 			);
@@ -257,6 +260,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4248E43C27CF83680057817F /* extentions.swift in Sources */,
 				4248E41427CE55BB0057817F /* ContentView.swift in Sources */,
 				4248E41227CE55BB0057817F /* SwiftPartialCircularProgressBarApp.swift in Sources */,
 			);

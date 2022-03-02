@@ -8,16 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State var progressValue: Float = 0.4
+    @State var progressValue: Float = 0.0
     @State var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var degress: Double = 0
     @State private var timerTick = false
-    @State private var progressFrom: Float = 0.4
-    @State private var progressTo: Float = 0.8 // this value should be larger than progressFrom
+    @State private var progressFrom: Float = 0
+    @State private var progressTo: Float = 1 // this value should be larger than progressFrom
     @State private var steps: Int = 10
+    @State private var currentStep: Int = 0
     @State var stepValues : [Float] = []
     @State private var rotation: Float = 0.0
-    @State private var rotationClose: Float = 360.0
     @State var x : Float = 0
     @State var s : Float = 0
     @State private var showingAlert = false
@@ -29,6 +29,7 @@ struct ContentView: View {
     @State private var startAngle: Double = 0.0
     @State private var endAngle: Double = 0.0
     @State private var totalAngle: Double = 0.0
+    @State var stops : [Gradient.Stop] = []
     
     struct Result : Equatable{
         var id = UUID()
@@ -36,41 +37,19 @@ struct ContentView: View {
         var color: Color
     }
     
-    func createStepsGradientStops (){
-        for step in stepValues {
-            let result = Result(id: UUID.init(), percentage: step, color: .white)
-            results.append(result)
-        }
-    }
-    
-    func bindColors () {
-        var stops : [Gradient.Stop] = []
-        
-        for result in results {
-            if result.color != .white {
-                let stop : Gradient.Stop = .init(color: result.color, location: CGFloat(result.percentage))
-                stops.append(stop)
-            }
-        }
-        stops = stops.sorted {$0.location < $1.location}
-        
-        angularGradient = AngularGradient(gradient: Gradient(stops: stops), center: .center)
-    }
-    
     
     var body: some View {
         VStack {
-            
             ZStack{
-                
                 ProgressBar(progress: self.$progressValue , progressFrom: self.$progressFrom , progressTo: self.$progressTo, rotation: self.$rotation, angularGradient: self.$angularGradient)
                     .frame(width: 250.0, height: 250.0)
                     .onReceive(timer) { _ in
                         withAnimation {
-                            if timerTick && progressValue <= stepValues.last! {
-                                progressValue += (progressTo - progressFrom) / Float(steps)
+                            let stepDiff = (progressTo - progressFrom) / Float(steps)
+                            if timerTick && currentStep < steps {
+                                progressValue = progressValue + stepDiff
+                                currentStep += 1
                             }
-                            // print("progress = \(progressValue)")
                         }
                     }
                 if indicator {
@@ -83,7 +62,6 @@ struct ContentView: View {
                                 if timerTick && degress < endDegree {
                                     degress += indicatorSteps
                                 }
-                                // print("degree = \(indicatorSteps)")
                             }
                         }
                 }
@@ -129,6 +107,7 @@ struct ContentView: View {
                                     
                                     calculateRightAngle()
                                     
+                                    
                                 }else {
                                     //alert
                                     showingAlert = true
@@ -157,9 +136,9 @@ struct ContentView: View {
                 Spacer()
                 VStack{
                     //  steps color list
-                    List(stepValues.indexed(), id: \.1.self){ idx , data in
+                    List(stepValues.indexed(), id: \.1.self){  idx , data in
                         HStack{
-                            Text("\(idx + 1): \(String(format: "%.2f", data))")
+                            Text("\(idx + 1): \(String(format: "%.2f", results[idx].percentage))")
                             Button(action: {
                                 //bindColors()
                             }) {
@@ -174,8 +153,6 @@ struct ContentView: View {
                         calculateSteps()
                     }.background(.white)
                     
-                    
-                    
                 }.frame(width: 200, height: 400, alignment: .center).background(.white)
             }
             
@@ -186,12 +163,11 @@ struct ContentView: View {
                 Text("Reset")
             }.frame(width: 300, height: 40, alignment: .center).cornerRadius(8).background(Color.red).foregroundColor(.white)
             
-            
             Spacer()
         }.onAppear {
             
             calculateSteps()
-            
+            createStepsGradientStops()
             calculateRightAngle()
             
         }.alert(isPresented: $showingAlert) {
@@ -200,7 +176,31 @@ struct ContentView: View {
     }
     
     
+    
+    fileprivate func createStepsGradientStops (){
+        results = []
+        for i in 0..<stepValues.count {
+            let percentage = Float(i + 1) / Float(stepValues.count) * (progressTo - progressFrom) + progressFrom
+            let result = Result(id: UUID.init(), percentage: Float(percentage), color: .white)
+            results.append(result)
+        }
+    }
+    
+    fileprivate func bindColors () {
+        stops = []
+        for result in results {
+            if result.color != .white {
+                let stop : Gradient.Stop = .init(color: result.color, location: CGFloat(result.percentage))
+                stops.append(stop)
+            }
+        }
+        stops = stops.sorted {$0.location < $1.location}
+        angularGradient = AngularGradient(gradient: Gradient(stops: stops), center: .center)
+    }
+    
+    
     fileprivate func calculateRightAngle() {
+        progressValue = progressFrom
         s = Float(((progressTo - progressFrom) * 360) - 180)
         if (s > 0){ // extra side more than 180 degrees
             let to360 = ((1 - progressTo) * 10) * 36
@@ -216,45 +216,27 @@ struct ContentView: View {
             x = to360 - abs(s/2)
             rotation = Float(x)
         }
-        
         degress = Double(((progressTo - progressFrom) * 360) / 2) * -1
         
-        
-        totalAngle = Double((progressTo - progressFrom) * 360)
-        
-        print("total: \(totalAngle)")
-        
-        startAngle = totalAngle - Double(rotation)
-        
-        print("startAngle: \(startAngle)")
-        
-        endAngle =  {
-            if (startAngle + totalAngle > 360) {
-                return startAngle + totalAngle - 360
-            }else{
-                return startAngle + totalAngle
-            }
-        }()
-        
-        print("endAngle: \(endAngle)")
+        calculateSteps()
+        bindColors ()
     }
     
     
     fileprivate func calculateSteps() {
         stepValues = []
         let stepDiff = (progressTo - progressFrom) / Float(steps)
-        stepValues.append(progressFrom)
-        for _ in 1..<steps {
+        stepValues.append(progressFrom + stepDiff)
+        for _ in 0..<steps {
             let newAdded = self.stepValues.last! + stepDiff
             self.stepValues.append(newAdded)
         }
-        
         createStepsGradientStops()
-        bindColors ()
     }
     
+    
     fileprivate func reset() {
-        progressValue = 0.4
+        progressValue = 0.0
         degress = 0
         timerTick = false
         progressFrom = 0.4
@@ -262,14 +244,16 @@ struct ContentView: View {
         steps = 10
         stepValues = []
         rotation = 0.0
-        rotationClose = 360.0
         x  = 0
         s  = 0
         showingAlert = false
         results = []
+        stops = []
+        currentStep = 0
         timer.upstream.connect().cancel()
         calculateSteps()
         calculateRightAngle()
+        createStepsGradientStops()
     }
     
     

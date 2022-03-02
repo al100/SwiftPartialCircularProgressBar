@@ -7,7 +7,7 @@ partial circular progress bar
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-![screenshot](https://user-images.githubusercontent.com/7622282/156391815-bc875ac9-5aa0-4004-bbd4-8709efbd860b.png =200x432)
+<img src="https://user-images.githubusercontent.com/7622282/156391815-bc875ac9-5aa0-4004-bbd4-8709efbd860b.png" width="200" height="432">
 
 This project was inspired by an stackoverflow question on partial circular progressBar with swiftUI. I decided to make it opensource for playing around with swiftUI progressBar and AngularGradient options.
 
